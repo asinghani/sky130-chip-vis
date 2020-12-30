@@ -1,0 +1,6 @@
+gdspy>=1.6.2
+numpy
+opencv-python
+imageio>=2.9.0
+vcdvcd>=2.0.3
+tqdm
