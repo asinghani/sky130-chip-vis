@@ -20,4 +20,4 @@ if [ ! -f "$CELLS" ]; then
 fi
 
 mkdir -p build
-echo "Compiling..." && iverilog -o build/sim -g2012 -DFUNCTIONAL -DSIM -DGL -DUNIT_DELAY=#1 -DUSE_POWER_PINS -I . $PRIMITIVES $CELLS $GL_NETLIST $TB && echo "Running sim..." && ./build/sim && mv $VCD build/$VCD
+echo "Compiling..." && iverilog -o build/sim -g2012 -DFUNCTIONAL -DSIM -DGL -DUNIT_DELAY="#1" -DUSE_POWER_PINS -I . $PRIMITIVES $CELLS $GL_NETLIST $TB && echo "Running sim..." && ./build/sim && mv $VCD build/$VCD
