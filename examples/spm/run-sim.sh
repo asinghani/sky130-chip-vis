@@ -1,3 +1,4 @@
+#!/bin/sh
 PDK=sky130_fd_sc_hd
 GL_NETLIST=spm.gl.v
 TB=spm_tb.v
