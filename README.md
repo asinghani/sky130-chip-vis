@@ -8,7 +8,7 @@ This tool can be used to convert a gate-level simulation result of a chip or mac
 - [Quickstart](#quickstart)
 - [Usage Guide](#usage-guide)
 - [Configuration Parameters](#configuration-parameters)
-    - [Modes](#modes)
+    - [Visualization Modes](#visualization-modes)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -222,7 +222,7 @@ optional arguments:
   --build_dir BUILD_DIR Directory to store temporary build products in (defaults to current directory)
 ```
 
-### Modes
+### Visualization Modes
 
 Following are the modes available (below each mode is an example from the `spm` design). In general, options 2 or 3 (with default exp_decay) are optimal for most designs. One frame in the final GIF corresponds to one clock cycle in the design/testbench.
 
