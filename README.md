@@ -1,6 +1,16 @@
-# Gate-Level Chip Visualization for OpenLANE
+# Gate-Level Chip Visualization Generator
 
-This tool can be used to convert a gate-level simulation result of a chip or macro (single block from a larger chip) into a graphical visualization of which portions of the chip are most-active during different portions of the chip's operation. It is designed to 
+This tool can be used to convert a gate-level simulation result of a chip or macro (single block from a larger chip) into a graphical visualization of which portions of the chip are most-active during different portions of the chip's operation. It is designed to work with designs built using OpenLANE on the SKY130 PDK, but it can be extended to work with other tools as well.
+
+## Table of Contents
+
+- [Setup](#in-depth-setup)
+- [Quickstart](#quickstart)
+- [Usage Guide](#usage-guide)
+- [Configuration Parameters](#configuration-parameters)
+    - [Modes](#modes)
+- [Contributing](#contributing)
+- [License](#license)
 
 <img src="https://raw.githubusercontent.com/asinghani/openlane-chip-vis/main/doc/example_large.gif" width="500pt" />
 
@@ -36,7 +46,7 @@ sh run-sim.sh # Runs the iverilog-based simulation and generates the VCD log
 sh gen-vis.sh # Generates the visualization GIFs
 ```
 
-## In-depth Setup
+## Usage Guide
 
 To use the visualizer on a new project, the following steps are needed (assuming all prerequisites have been installed):
 
@@ -136,7 +146,7 @@ python3 chip-vis.py --cell_models tmp_cells_fixed.v \
 
 ```
 
-6. After the script finishes running, it should output one or more GIF files containing the visualization (multiple if multiple modes are selected). The script is fairly self-verifying, with most assumptions documented as `assert`s, so if it fails on your design, please file an issue with details about the design and the error message from the assertion failure.
+6. After the program finishes running, it should output one or more GIF files containing the visualization (multiple if multiple modes are selected). The program is fairly self-verifying, with most assumptions documented as `assert`s, so if it fails on your design, please file an issue with details about the design and the error message from the assertion failure.
 
 ## Configuration Parameters
 
@@ -247,7 +257,7 @@ Mode 5: Highlights each cell with a brightness linearly based on the number of r
 
 ## Contributing
 
-If you run into any problems (especially `assert` failures or other crashes) running on your design, please open a GitHub issue with some details about your design and the exact error that was printed when the script failed. (Or, feel free to send a pull-request if you have any changes/improvements).
+If you run into any problems (especially `assert` failures or other crashes) running on your design, please open a GitHub issue with some details about your design and the exact error that was printed when the program failed. (Or, feel free to send a pull-request if you have any changes/improvements).
 
 ## License
 
