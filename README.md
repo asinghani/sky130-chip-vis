@@ -4,7 +4,7 @@ This tool can be used to convert a gate-level simulation result of a chip or mac
 
 ## Table of Contents
 
-- [Setup](#in-depth-setup)
+- [Setup](#setup)
 - [Quickstart](#quickstart)
 - [Usage Guide](#usage-guide)
 - [Configuration Parameters](#configuration-parameters)
