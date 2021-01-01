@@ -443,7 +443,7 @@ def draw_frame(frame_data, brightness=False, blur=7, postscale=POSTSCALE, textsc
     width_scaled = int(SCALE * WIDTH + 1)
     height_scaled = int(SCALE * HEIGHT + 1)
 
-    img = np.zeros((width_scaled, height_scaled, 3), dtype=np.uint8)
+    img = np.zeros((height_scaled, width_scaled, 3), dtype=np.uint8)
 
     extra_cells = [(filler_cells, (0x17, 0x3f, 0x5f)),
                    (phy_cells, (0x17, 0x3f, 0x5f))]
@@ -451,12 +451,14 @@ def draw_frame(frame_data, brightness=False, blur=7, postscale=POSTSCALE, textsc
     on_color = (0xed, 0x55, 0x3b)
     off_color = (0x40, 0x40, 0x40)
 
-    img[int(SCALE * top_x0):int(SCALE * top_x1), int(SCALE * top_y0):int(SCALE * top_y1)] = (0xd, 0x14, 0x18)
+    img[int(SCALE * top_y0):int(SCALE * top_y1), int(SCALE * top_x0):int(SCALE * top_x1)] = (0xd, 0x14, 0x18)
 
     for name, cell_type, (x0, y0, x1, y1) in real_cells:
         x0, y0, x1, y1 = int(SCALE * x0), int(SCALE * y0), int(SCALE * x1), int(SCALE * y1)
-        assert x0 >= 0 and x1 < img.shape[0]
-        assert y0 >= 0 and y1 < img.shape[1]
+
+        assert x0 >= 0 and x1 < img.shape[1]
+        assert y0 >= 0 and y1 < img.shape[0]
+
 
         out = cell_to_output_nets[name]
         if len(out) == 0:
@@ -473,7 +475,7 @@ def draw_frame(frame_data, brightness=False, blur=7, postscale=POSTSCALE, textsc
         else:
             c = on_color if out else off_color
 
-        img[x0:x1, y0:y1] = c
+        img[(img.shape[0]-y1-1):(img.shape[0]-y0-1), x0:x1] = c
 
     blur_kernel = np.ones((blur, blur), np.float32) / (blur*blur)
     zeros = (img == (0, 0, 0))
