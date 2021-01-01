@@ -30,6 +30,7 @@ In order to run the visualizer, the following dependencies are required:
     - `imageio`
     - `vcdvcd`
     - `tqdm`
+- (Optional) [Gifsicle](https://github.com/kohler/gifsicle)
 
 The following are not directly invoked by the visualizer but are needed for the build / simulation
 - [Icarus Verilog](http://iverilog.icarus.com)
@@ -147,6 +148,11 @@ python3 chip-vis.py --cell_models tmp_cells_fixed.v \
 ```
 
 6. After the program finishes running, it should output one or more GIF files containing the visualization (multiple if multiple modes are selected). The program is fairly self-verifying, with most assumptions documented as `assert`s, so if it fails on your design, please file an issue with details about the design and the error message from the assertion failure.
+
+7. (Optional) The GIF files produced may be extremely large (~hundreds of MB) because they are not compressed during creation. However, they can be (effectively-losslessly) compressed down to a fraction of their size (on larger designs, the compressed GIF is often 90% smaller) using [Gifsicle](https://github.com/kohler/gifsicle). The following command is recommended - it will decrease the filesize significantly without harming quality:
+```
+gifsicle -O3 --colors 256 <input GIF filename> -o <outfile GIF filename>
+```
 
 ## Configuration Parameters
 
