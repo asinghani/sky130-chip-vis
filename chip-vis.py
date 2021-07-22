@@ -342,7 +342,15 @@ print("Searching for reset")
 if len(RST) < 1:
     start_time = 0
 else:
+    last = -1
+    # Last one, but scan in case we did multiple resets - we want the first.
     start_time, start_rst = vcd[RST].tv[-1]
+    for time, val in vcd[RST].tv:
+        if int(val) == 0:
+            if last == -1:
+                start_time, start_rst = time,val
+            last = time
+
     assert start_rst == "0"
 
 print(f"Start time = {start_time}")
