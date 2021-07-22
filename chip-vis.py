@@ -560,16 +560,39 @@ print(f"Max text height: {textheight}")
 ###########################################
 
 print("Filtering signals...")
-no_change = set([x for x in values_over_time[0].keys() if all(a[x] for a in values_over_time)])
-mode_0_data = values_over_time[:]
-mode_1_data = [{k: 0 if (k in no_change and k != "M_LABEL") else v for k, v in x.items()} for x in values_over_time]
+if 0 in MODES:
+    mode_0_data = values_over_time[:]
+else:
+    mode_0_data = list()
+
+if 1 in MODES:
+    no_change = set([x for x in values_over_time[0].keys() if all(a[x] for a in values_over_time)])
+    mode_1_data = [{k: 0 if (k in no_change and k != "M_LABEL") else v for k, v in x.items()} for x in values_over_time]
+else:
+    mode_1_data = list()
+
 
 print("Finding edges in signals...")
 last = values_over_time[0]
-mode_2_data = [{x: 0 if x != "M_LABEL" else last[x] for x in last.keys()}]
-mode_3_data = [{x: 0 if x != "M_LABEL" else last[x] for x in last.keys()}]
-mode_4_data = [{x: 0.0 if x != "M_LABEL" else last[x] for x in last.keys()}]
-mode_5_data = [{x: 0.0 if x != "M_LABEL" else last[x] for x in last.keys()}]
+if 2 in MODES:
+    mode_2_data = [{x: 0 if x != "M_LABEL" else last[x] for x in last.keys()}]
+else:
+    mode_2_data = list()
+
+if 3 in MODES:
+    mode_3_data = [{x: 0 if x != "M_LABEL" else last[x] for x in last.keys()}]
+else:
+    mode_3_data = list()
+
+if 4 in MODES:
+    mode_4_data = [{x: 0.0 if x != "M_LABEL" else last[x] for x in last.keys()}]
+else:
+    mode_4_data = list()
+
+if 5 in MODES:
+    mode_5_data = [{x: 0.0 if x != "M_LABEL" else last[x] for x in last.keys()}]
+else:
+    mode_5_data = list()
 
 for i, x in list(enumerate(values_over_time[1:])):
     changed = {}
@@ -579,40 +602,44 @@ for i, x in list(enumerate(values_over_time[1:])):
         else:
             changed[k] = (v != last[k])
     last = x
-
-    mode_3_brightness = copy.deepcopy(mode_3_data[-1])
-    for k in mode_3_brightness:
-        if k == "M_LABEL":
-            mode_3_brightness[k] = changed[k]
-        elif changed[k]:
-            mode_3_brightness[k] = 1.0
-        else:
-            mode_3_brightness[k] = mode_3_brightness[k] * EXP_DECAY
-
-    mode_4_brightness = copy.deepcopy(mode_4_data[-1])
-    for k in mode_4_brightness:
-        if k == "M_LABEL":
-            mode_4_brightness[k] = changed[k]
-        elif changed[k]:
-            mode_4_brightness[k] = min((mode_4_brightness[k] + 0.5) * EXP_GROW, 1.5) - 0.5
-        else:
-            mode_4_brightness[k] = max((mode_4_brightness[k] + 0.5) * EXP_DECAY, 0.5) - 0.5
-
-    mode_5_brightness = copy.deepcopy(mode_5_data[-1])
-    for k in mode_5_brightness:
-        if k == "M_LABEL":
-            mode_5_brightness[k] = changed[k]
-        elif changed[k]:
-            mode_5_brightness[k] = min((mode_5_brightness[k] + 0.5) + LIN_GROW, 1.5) - 0.5
-        else:
-            mode_5_brightness[k] = max((mode_5_brightness[k] + 0.5) - LIN_DECAY, 0.5) - 0.5
-
     assert changed.keys() == x.keys()
 
-    mode_2_data.append(changed)
-    mode_3_data.append(mode_3_brightness)
-    mode_4_data.append(mode_4_brightness)
-    mode_5_data.append(mode_5_brightness)
+    if len(mode_2_data):
+        mode_2_data.append(changed)
+
+    if len(mode_3_data):
+        mode_3_brightness = copy.deepcopy(mode_3_data[-1])
+        for k in mode_3_brightness:
+            if k == "M_LABEL":
+                mode_3_brightness[k] = changed[k]
+            elif changed[k]:
+                mode_3_brightness[k] = 1.0
+            else:
+                mode_3_brightness[k] = mode_3_brightness[k] * EXP_DECAY
+        mode_3_data.append(mode_3_brightness)
+
+    if len(mode_4_data):
+        mode_4_brightness = copy.deepcopy(mode_4_data[-1])
+        for k in mode_4_brightness:
+            if k == "M_LABEL":
+                mode_4_brightness[k] = changed[k]
+            elif changed[k]:
+                mode_4_brightness[k] = min((mode_4_brightness[k] + 0.5) * EXP_GROW, 1.5) - 0.5
+            else:
+                mode_4_brightness[k] = max((mode_4_brightness[k] + 0.5) * EXP_DECAY, 0.5) - 0.5
+        mode_4_data.append(mode_4_brightness)
+
+    if len(mode_5_data):
+        mode_5_brightness = copy.deepcopy(mode_5_data[-1])
+        for k in mode_5_brightness:
+            if k == "M_LABEL":
+                mode_5_brightness[k] = changed[k]
+            elif changed[k]:
+                mode_5_brightness[k] = min((mode_5_brightness[k] + 0.5) + LIN_GROW, 1.5) - 0.5
+            else:
+                mode_5_brightness[k] = max((mode_5_brightness[k] + 0.5) - LIN_DECAY, 0.5) - 0.5
+
+        mode_5_data.append(mode_5_brightness)
 
 ###########################################
 # Draw frames
@@ -623,7 +650,6 @@ warn = set()
 for mode in MODES:
     frames = []
     print(f"Generating frames for mode {mode} (very slow)...")
-    sleep(0.4)
 
     br = mode in [C_MODE_EXP_TIME, C_MODE_EXP_HEATMAP, C_MODE_LIN_HEATMAP]
     dat = {
