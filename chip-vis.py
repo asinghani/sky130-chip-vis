@@ -373,6 +373,8 @@ signals_of_interest = list(set(signals_keep).intersection(output_nets))
 print(f"Found {len(signals_of_interest)} matching nets out of {len(signals_keep)} internal signals / {len(output_nets)} total nets")
 print(f"{len(output_nets) - len(signals_of_interest)} unmatched nets (unless this number is large, it should be ignorable)")
 
+# Otherwise there is nothing to render
+assert (len(signals_of_interest) > 0)
 values_over_time = []
 
 print()
