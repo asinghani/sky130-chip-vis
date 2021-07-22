@@ -36,6 +36,9 @@ parser.add_argument("--mode", help="Comma-separated list of modes to visualize (
 parser.add_argument("--prefix", help="Signal-name prefix in VCD, including trailing dot (should be <tb name>.<uut name>.)",
                     action="store", required=True)
 
+parser.add_argument("--strip", help="Strip this prefix in VCD as well",
+                    action="store", required=False)
+
 parser.add_argument("--status_var", help="Signal which is the status-string to show under each frame (should be <tb name>.status)",
                     action="store", required=True)
 
@@ -102,6 +105,7 @@ OUTFILE = args.outfile
 MODE = args.mode
 
 PREFIX = args.prefix
+STRIP_PREFIX = args.strip
 LABEL = args.status_var
 RST = args.rst
 CLK = args.clk
@@ -309,12 +313,28 @@ print("Loading VCD (slow)...")
 vcd = VCDVCD(VCD_FILE)
 print("VCD loaded")
 
+# The --prefix "X" on the command line better match with the VCD signals.
+# Use list_signals.py <vcd> to find it
 assert all(x.startswith(PREFIX) or x.startswith(LABEL) for x in vcd.signals)
 label_signal = [x for x in vcd.signals if x.startswith(LABEL)]
 assert len(label_signal) == 1
 label_signal = label_signal[0]
 
 signals = [x[len(PREFIX):] for x in vcd.signals]
+
+# Strip the --strip there are any
+if STRIP_PREFIX != None:
+    new_signals = list();
+    for x in signals:
+        if x.startswith(STRIP_PREFIX):
+            x = x.replace(STRIP_PREFIX, "");
+            new_signals.append(x)
+        else:
+            new_signals.append(x)
+    signals = new_signals;
+else:
+    STRIP_PREFIX = ""
+
 signals_name_map = {x.replace("\\", ""): x for x in signals}
 signals_keep = list(signals_name_map.keys())
 
@@ -353,7 +373,10 @@ last = ""
 for start, end in clk_ticks:
     dat = {}
     for signal in signals_of_interest:
-        dat[signal] = int4(vcd[PREFIX+signals_name_map[signal]][end-1])
+        # STRIP_PREFIX is "" if --strip has not been set.
+        original_signal = PREFIX+STRIP_PREFIX+signals_name_map[signal];
+        vcd_data = vcd[original_signal];
+        dat[signal] = int4(vcd_data[end-1])
 
     x = vcd[label_signal][end-1]
     x = hex(int(x, 2))[2:]
